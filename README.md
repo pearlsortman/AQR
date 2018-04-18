@@ -7,13 +7,13 @@ In order to keep track of enough information to calculate P&L we need to keep tr
 At any given moment we likely still own a sizeable position in any given security. Thus, we consider P&L to be the total “cash” that we are keeping track of in the position service plus the mark to market value of our current holdings. 
 
 ## Task
-Your program will take a time series of fill and price update messages, and produce a list of PNL messages. You will output one PNL message for each Price Update message. Please note that the timestamps in the fill message file and the timestamps in the price update message file are comparable. You are essentially replaying time.
+Your program will take a time series of fillOrder and price update messages, and produce a list of PNL messages. You will output one PNL message for each Price Update message. Please note that the timestamps in the fillOrder message file and the timestamps in the price update message file are comparable. You are essentially replaying time.
 Your program will take two arguments, the path of the fills/price files, and should write PNL Message messages to stdout. You may write this in any language you choose provided it can be easily run and compiled on either windows or linux.
 positionservice.sh fills.gz prices.gz
 
 ## I/O
 ### Fill Message
-The fill log file {fills.gz} contains a time ordered list of Fill Messages. The space separated format is organized as follows:
+The fillOrder log file {fills.gz} contains a time ordered list of Fill Messages. The space separated format is organized as follows:
 F 1388534400000 MSFT 42.43 300 B
 F 1388534400000 AAPL 181.26 300 B
 F 1388534472953 MSFT 42.93 300 S
