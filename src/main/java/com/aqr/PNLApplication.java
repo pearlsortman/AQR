@@ -1,67 +1,56 @@
 package com.aqr;
 
-import com.aqr.model.FillOrder;
-import com.aqr.model.PriceUpdate;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.zip.GZIPInputStream;
 
 public class PNLApplication {
 
-    public static void main(String[] args) throws IOException {
-        FileInputStream inputStreamFills = null;
-        GZIPInputStream gzipInputStreamFills = null;
-        Scanner scFills = null;
-
-        FileInputStream inputStreamPrices = null;
-        GZIPInputStream gzipInputStreamPrices = null;
-        Scanner scPrices = null;
+    public static void main(String[] args) {
+        File fillsFile;
+        File pricesFile;
+        Scanner fillsFileScanner = null;
+        Scanner priceFileScanner = null;
 
         try {
-            File fills = new File(args[0]);
-            inputStreamFills = new FileInputStream(fills);
-            gzipInputStreamFills = new GZIPInputStream(inputStreamFills);
-            scFills = new Scanner(gzipInputStreamFills, "UTF-8");
+            fillsFile = new File(args[0]);
+            pricesFile = new File(args[1]);
 
-            File prices = new File(args[1]);
-            inputStreamPrices = new FileInputStream(prices);
-            gzipInputStreamPrices = new GZIPInputStream(inputStreamPrices);
-            scPrices = new Scanner(gzipInputStreamPrices, "UTF-8");
+            FillOrder fillOrder;
+            fillsFileScanner = fileToScanner(fillsFile);
 
-            parseFills(scFills);
-            parsePrices(scPrices);
+            while (fillsFileScanner.hasNextLine()) {
+                fillOrder = new FillOrder(fillsFileScanner.nextLine());
+                Portfolio.addFillOrderToQueue(fillOrder);
+            }
+
+            PriceUpdate priceUpdate;
+            priceFileScanner = fileToScanner(pricesFile);
+
+            while (priceFileScanner.hasNextLine()) {
+                priceUpdate = new PriceUpdate(priceFileScanner.nextLine());
+                Portfolio.processPriceUpdate(priceUpdate);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
-            if (inputStreamFills != null) inputStreamFills.close();
-            if (inputStreamPrices != null) inputStreamPrices.close();
-
-            if (gzipInputStreamFills != null) gzipInputStreamFills.close();
-            if (gzipInputStreamPrices != null) gzipInputStreamPrices.close();
-
-            if (scFills != null) scFills.close();
-            if (scPrices != null) scPrices.close();
+            if (fillsFileScanner != null) fillsFileScanner.close();
+            if (priceFileScanner != null) priceFileScanner.close();
         }
     }
 
-    private static void parseFills(Scanner scFills) throws IOException {
-        while (scFills.hasNextLine()) {
-            String fill = scFills.nextLine();
-            FillOrder fillOrder = new FillOrder(fill);
-        }
+    /**
+     *
+     * @param file
+     * @return Scanner
+     * @throws IOException
+     */
+    private static Scanner fileToScanner(File file) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(file);
+        GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
 
-        if (scFills.ioException() != null) {
-            throw scFills.ioException();
-        }
-    }
-
-    private static void parsePrices(Scanner scPrices) throws IOException {
-        while (scPrices.hasNextLine()) {
-            String price = scPrices.nextLine();
-            PriceUpdate priceUpdate = new PriceUpdate(price);
-        }
-
-        if (scPrices.ioException() != null) {
-            throw scPrices.ioException();
-        }
+        return new Scanner(gzipInputStream, "UTF-8");
     }
 }
