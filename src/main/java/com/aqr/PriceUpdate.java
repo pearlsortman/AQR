@@ -5,24 +5,27 @@ import com.google.common.base.Splitter;
 import java.math.BigDecimal;
 import java.util.List;
 
-/*
- * Example: P 1388534400000 MSFT 42.43
+/**
  *
+ * @sampleInput P 1388534400000 MSFT 42.43
+ * <p>
  * 1. Message type: This is always P for this file
  * 2. Milliseconds from the unix timestamp
  * 3. Symbol name
  * 4. Current price
- *
- * */
+ */
 public class PriceUpdate {
 
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ');
-
-    private static final String MSG_TYPE_P = "P";
     private long timestamp;
     private String symbol;
     private BigDecimal currentPrice;
 
+    /**
+     *
+     * @constructor
+     * @param priceUpdate
+     */
     PriceUpdate(String priceUpdate) {
         List<String> splitStr = SPACE_SPLITTER.splitToList(priceUpdate);
 
@@ -41,14 +44,5 @@ public class PriceUpdate {
 
     public BigDecimal getCurrentPrice() {
         return currentPrice;
-    }
-
-    @Override
-    public String toString() {
-        return "PriceUpdate{" +
-                "timestamp=" + timestamp +
-                ", symbol='" + symbol + '\'' +
-                ", currentPrice=" + currentPrice +
-                '}';
     }
 }

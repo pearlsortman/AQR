@@ -1,7 +1,11 @@
 # AQR Position Service Simulator
 
 ## Solution
-Run the application `app data/fills.gz data/prices.gz`
+### Running the application
+
+`./gradlew build`
+
+`java -jar aqr-1.0-SNAPSHOT.jar ../../data/fills.gz ../../data/prices.gz`
 
 ## Requirements
 ### Background
